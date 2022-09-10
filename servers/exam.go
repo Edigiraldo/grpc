@@ -2,6 +2,7 @@ package servers
 
 import (
 	"context"
+	"io"
 
 	"github.com/Edigiraldo/grpc/exampb"
 	"github.com/Edigiraldo/grpc/models"
@@ -45,4 +46,32 @@ func (e *Exam) SetExam(ctx context.Context, req *exampb.Exam) (*exampb.SetExamRe
 		Id:   exam.Id,
 		Name: exam.Name,
 	}, nil
+}
+
+func (e *Exam) SetQuestions(stream exampb.ExamService_SetQuestionsServer) error {
+	for {
+		msg, err := stream.Recv()
+		if err == io.EOF {
+			return stream.SendAndClose(&exampb.SetQuestionsResponse{
+				Ok: true,
+			})
+		}
+		if err != nil {
+			return err
+		}
+
+		question := models.Question{
+			Id:       msg.GetId(),
+			Question: msg.GetQuestion(),
+			Answer:   msg.GetAnswer(),
+			ExamId:   msg.GetExamId(),
+		}
+
+		err = e.repository.SetQuestion(stream.Context(), &question)
+		if err != nil {
+			return stream.SendAndClose(&exampb.SetQuestionsResponse{
+				Ok: false,
+			})
+		}
+	}
 }
