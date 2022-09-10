@@ -11,6 +11,7 @@ type Repository interface {
 	SetStudent(ctx context.Context, student *models.Student) error
 	GetExam(ctx context.Context, id string) (*models.Exam, error)
 	SetExam(ctx context.Context, exam *models.Exam) error
+	SetQuestion(ctx context.Context, question *models.Question) error
 }
 
 var implementation Repository
