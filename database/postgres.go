@@ -37,3 +37,20 @@ func (repo *PostgresRepository) SetStudent(ctx context.Context, student *models.
 
 	return err
 }
+
+func (repo *PostgresRepository) GetExam(ctx context.Context, id string) (exam *models.Exam, err error) {
+	exam = &models.Exam{}
+	row := repo.db.QueryRowContext(ctx, "SELECT id, name FROM exams WHERE id = $1", id)
+	if err = row.Scan(&exam.Id, &exam.Name); err != nil {
+		return nil, err
+	}
+
+	return exam, nil
+}
+
+func (repo *PostgresRepository) SetExam(ctx context.Context, exam *models.Exam) error {
+	_, err := repo.db.ExecContext(ctx, "INSERT INTO exams (id, name) VALUES ($1 ,$2)",
+		exam.Id, exam.Name)
+
+	return err
+}
