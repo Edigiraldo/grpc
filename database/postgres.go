@@ -54,3 +54,10 @@ func (repo *PostgresRepository) SetExam(ctx context.Context, exam *models.Exam) 
 
 	return err
 }
+
+func (repo *PostgresRepository) SetQuestion(ctx context.Context, question *models.Question) error {
+	_, err := repo.db.ExecContext(ctx, "INSERT INTO questions (id, question, answer, exam_id) VALUES ($1 ,$2, $3, $4)",
+		question.Id, question.Question, question.Answer, question.ExamId)
+
+	return err
+}
