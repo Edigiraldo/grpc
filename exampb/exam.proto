@@ -9,6 +9,13 @@ message Exam {
 	string name = 2;
 }
 
+message Question {
+	string id = 1;
+	string answer = 2;
+	string question = 3;
+	string exam_id = 4;
+}
+
 message GetExamRequest {
 	string id = 1;
 }
@@ -18,7 +25,14 @@ message SetExamResponse {
 	string name = 2;
 }
 
+message SetQuestionsResponse {
+	bool ok = 1;
+}
+
 service ExamService {
 	rpc GetExam(GetExamRequest) returns (Exam);
 	rpc SetExam(Exam) returns (SetExamResponse);
+	rpc SetQuestions(stream Question) returns (SetQuestionsResponse);
 }
+
+
