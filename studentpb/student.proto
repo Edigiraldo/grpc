@@ -1,0 +1,24 @@
+syntax = "proto3";
+//protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative studentpb/student.proto
+
+package student;
+option go_package = "Edigiraldo/grpc/;studentpb";
+
+message Student {
+	 string id = 1;
+	 string name = 2;
+	 int32 age = 3;
+}
+
+message GetStudentRequest {
+	string id = 1;
+}
+
+message SetStudentResponse {
+	string id = 1;
+}
+
+service StudentService {
+	rpc GetStudent(GetStudentRequest) returns (Student);
+	rpc SetStudent(Student) returns (SetStudentResponse);
+}
