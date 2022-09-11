@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"log"
 
 	"github.com/Edigiraldo/grpc/models"
 	_ "github.com/lib/pq"
@@ -60,4 +61,39 @@ func (repo *PostgresRepository) SetQuestion(ctx context.Context, question *model
 		question.Id, question.Question, question.Answer, question.ExamId)
 
 	return err
+}
+
+func (repo *PostgresRepository) SetEnrollment(ctx context.Context, enroll *models.Enrollment) error {
+	_, err := repo.db.ExecContext(ctx, "INSERT INTO enrollments (student_id, exam_id) VALUES ($1 ,$2)",
+		enroll.StudentId, enroll.ExamId)
+
+	return err
+}
+
+func (repo *PostgresRepository) GetStudentsPerExam(ctx context.Context, examId string) ([]models.Student, error) {
+	rows, err := repo.db.QueryContext(ctx, "SELECT id, name, age FROM students RIGHT JOIN (SELECT student_id FROM enrollments WHERE exam_id = $1) as students_on_exam ON students.id = students_on_exam.student_id", examId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var students []models.Student
+	for rows.Next() {
+		student := models.Student{}
+		if err := rows.Scan(&student.Id, &student.Name, &student.Age); err == nil {
+			students = append(students, student)
+		}
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	err = rows.Close()
+	if err != nil {
+		log.Println("error closing rows: %w", err)
+		return nil, err
+	}
+
+	return students, nil
 }
