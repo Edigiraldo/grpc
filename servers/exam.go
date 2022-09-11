@@ -7,6 +7,7 @@ import (
 	"github.com/Edigiraldo/grpc/exampb"
 	"github.com/Edigiraldo/grpc/models"
 	"github.com/Edigiraldo/grpc/repository"
+	"github.com/Edigiraldo/grpc/studentpb"
 )
 
 type Exam struct {
@@ -74,4 +75,51 @@ func (e *Exam) SetQuestions(stream exampb.ExamService_SetQuestionsServer) error 
 			})
 		}
 	}
+}
+
+func (e *Exam) EnrollStudents(stream exampb.ExamService_EnrollStudentsServer) error {
+	for {
+		msg, err := stream.Recv()
+		if err == io.EOF {
+			return stream.SendAndClose(&exampb.EnrollStudentsResponse{
+				Ok: true,
+			})
+		}
+		if err != nil {
+			return err
+		}
+
+		enroll := models.Enrollment{
+			StudentId: msg.GetStudentId(),
+			ExamId:    msg.GetExamId(),
+		}
+
+		err = e.repository.SetEnrollment(stream.Context(), &enroll)
+		if err != nil {
+			return stream.SendAndClose(&exampb.EnrollStudentsResponse{
+				Ok: false,
+			})
+		}
+	}
+}
+
+func (e *Exam) GetStudentsPerExam(req *exampb.GetStudentsPerExamRequest, stream exampb.ExamService_GetStudentsPerExamServer) error {
+	examId := req.GetExamId()
+	students, err := e.repository.GetStudentsPerExam(context.TODO(), examId)
+	if err != nil {
+		return err
+	}
+
+	for _, s := range students {
+		student := studentpb.Student{
+			Id:   s.Id,
+			Name: s.Name,
+			Age:  s.Age,
+		}
+		if err = stream.Send(&student); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
