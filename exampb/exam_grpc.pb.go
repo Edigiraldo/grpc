@@ -8,6 +8,7 @@ package exampb
 
 import (
 	context "context"
+	studentpb "github.com/Edigiraldo/grpc/studentpb"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -25,6 +26,8 @@ type ExamServiceClient interface {
 	GetExam(ctx context.Context, in *GetExamRequest, opts ...grpc.CallOption) (*Exam, error)
 	SetExam(ctx context.Context, in *Exam, opts ...grpc.CallOption) (*SetExamResponse, error)
 	SetQuestions(ctx context.Context, opts ...grpc.CallOption) (ExamService_SetQuestionsClient, error)
+	EnrollStudents(ctx context.Context, in *EnrollStudentsRequest, opts ...grpc.CallOption) (*EnrollStudentsResponse, error)
+	GetStudentsPerExam(ctx context.Context, in *GetStudentsPerExamRequest, opts ...grpc.CallOption) (ExamService_GetStudentsPerExamClient, error)
 }
 
 type examServiceClient struct {
@@ -87,6 +90,47 @@ func (x *examServiceSetQuestionsClient) CloseAndRecv() (*SetQuestionsResponse, e
 	return m, nil
 }
 
+func (c *examServiceClient) EnrollStudents(ctx context.Context, in *EnrollStudentsRequest, opts ...grpc.CallOption) (*EnrollStudentsResponse, error) {
+	out := new(EnrollStudentsResponse)
+	err := c.cc.Invoke(ctx, "/exam.ExamService/EnrollStudents", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *examServiceClient) GetStudentsPerExam(ctx context.Context, in *GetStudentsPerExamRequest, opts ...grpc.CallOption) (ExamService_GetStudentsPerExamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &ExamService_ServiceDesc.Streams[1], "/exam.ExamService/GetStudentsPerExam", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &examServiceGetStudentsPerExamClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type ExamService_GetStudentsPerExamClient interface {
+	Recv() (*studentpb.Student, error)
+	grpc.ClientStream
+}
+
+type examServiceGetStudentsPerExamClient struct {
+	grpc.ClientStream
+}
+
+func (x *examServiceGetStudentsPerExamClient) Recv() (*studentpb.Student, error) {
+	m := new(studentpb.Student)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // ExamServiceServer is the server API for ExamService service.
 // All implementations must embed UnimplementedExamServiceServer
 // for forward compatibility
@@ -94,6 +138,8 @@ type ExamServiceServer interface {
 	GetExam(context.Context, *GetExamRequest) (*Exam, error)
 	SetExam(context.Context, *Exam) (*SetExamResponse, error)
 	SetQuestions(ExamService_SetQuestionsServer) error
+	EnrollStudents(context.Context, *EnrollStudentsRequest) (*EnrollStudentsResponse, error)
+	GetStudentsPerExam(*GetStudentsPerExamRequest, ExamService_GetStudentsPerExamServer) error
 	mustEmbedUnimplementedExamServiceServer()
 }
 
@@ -109,6 +155,12 @@ func (UnimplementedExamServiceServer) SetExam(context.Context, *Exam) (*SetExamR
 }
 func (UnimplementedExamServiceServer) SetQuestions(ExamService_SetQuestionsServer) error {
 	return status.Errorf(codes.Unimplemented, "method SetQuestions not implemented")
+}
+func (UnimplementedExamServiceServer) EnrollStudents(context.Context, *EnrollStudentsRequest) (*EnrollStudentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EnrollStudents not implemented")
+}
+func (UnimplementedExamServiceServer) GetStudentsPerExam(*GetStudentsPerExamRequest, ExamService_GetStudentsPerExamServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetStudentsPerExam not implemented")
 }
 func (UnimplementedExamServiceServer) mustEmbedUnimplementedExamServiceServer() {}
 
@@ -185,6 +237,45 @@ func (x *examServiceSetQuestionsServer) Recv() (*Question, error) {
 	return m, nil
 }
 
+func _ExamService_EnrollStudents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EnrollStudentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ExamServiceServer).EnrollStudents(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/exam.ExamService/EnrollStudents",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExamServiceServer).EnrollStudents(ctx, req.(*EnrollStudentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ExamService_GetStudentsPerExam_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(GetStudentsPerExamRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(ExamServiceServer).GetStudentsPerExam(m, &examServiceGetStudentsPerExamServer{stream})
+}
+
+type ExamService_GetStudentsPerExamServer interface {
+	Send(*studentpb.Student) error
+	grpc.ServerStream
+}
+
+type examServiceGetStudentsPerExamServer struct {
+	grpc.ServerStream
+}
+
+func (x *examServiceGetStudentsPerExamServer) Send(m *studentpb.Student) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // ExamService_ServiceDesc is the grpc.ServiceDesc for ExamService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -200,12 +291,21 @@ var ExamService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "SetExam",
 			Handler:    _ExamService_SetExam_Handler,
 		},
+		{
+			MethodName: "EnrollStudents",
+			Handler:    _ExamService_EnrollStudents_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "SetQuestions",
 			Handler:       _ExamService_SetQuestions_Handler,
 			ClientStreams: true,
+		},
+		{
+			StreamName:    "GetStudentsPerExam",
+			Handler:       _ExamService_GetStudentsPerExam_Handler,
+			ServerStreams: true,
 		},
 	},
 	Metadata: "exampb/exam.proto",
