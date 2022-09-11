@@ -12,6 +12,8 @@ type Repository interface {
 	GetExam(ctx context.Context, id string) (*models.Exam, error)
 	SetExam(ctx context.Context, exam *models.Exam) error
 	SetQuestion(ctx context.Context, question *models.Question) error
+	SetEnrollment(ctx context.Context, enroll *models.Enrollment) error
+	GetStudentsPerExam(ctx context.Context, examId string) ([]models.Student, error)
 }
 
 var implementation Repository
@@ -34,4 +36,12 @@ func GetExam(ctx context.Context, id string) (*models.Exam, error) {
 
 func SetExam(ctx context.Context, exam *models.Exam) error {
 	return implementation.SetExam(ctx, exam)
+}
+
+func SetEnrollment(ctx context.Context, enroll *models.Enrollment) error {
+	return implementation.SetEnrollment(ctx, enroll)
+}
+
+func GetStudentsPerExam(ctx context.Context, examId string) ([]models.Student, error) {
+	return implementation.GetStudentsPerExam(ctx, examId)
 }
