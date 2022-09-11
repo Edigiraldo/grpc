@@ -48,7 +48,7 @@ service ExamService {
 	rpc GetExam(GetExamRequest) returns (Exam);
 	rpc SetExam(Exam) returns (SetExamResponse);
 	rpc SetQuestions(stream Question) returns (SetQuestionsResponse);
-	rpc EnrollStudents(EnrollStudentsRequest) returns (EnrollStudentsResponse);
+	rpc EnrollStudents(stream EnrollStudentsRequest) returns (EnrollStudentsResponse);
 	rpc GetStudentsPerExam(GetStudentsPerExamRequest) returns (stream student.Student);
 }
 

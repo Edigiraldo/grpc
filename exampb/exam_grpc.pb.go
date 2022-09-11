@@ -26,7 +26,7 @@ type ExamServiceClient interface {
 	GetExam(ctx context.Context, in *GetExamRequest, opts ...grpc.CallOption) (*Exam, error)
 	SetExam(ctx context.Context, in *Exam, opts ...grpc.CallOption) (*SetExamResponse, error)
 	SetQuestions(ctx context.Context, opts ...grpc.CallOption) (ExamService_SetQuestionsClient, error)
-	EnrollStudents(ctx context.Context, in *EnrollStudentsRequest, opts ...grpc.CallOption) (*EnrollStudentsResponse, error)
+	EnrollStudents(ctx context.Context, opts ...grpc.CallOption) (ExamService_EnrollStudentsClient, error)
 	GetStudentsPerExam(ctx context.Context, in *GetStudentsPerExamRequest, opts ...grpc.CallOption) (ExamService_GetStudentsPerExamClient, error)
 }
 
@@ -90,17 +90,42 @@ func (x *examServiceSetQuestionsClient) CloseAndRecv() (*SetQuestionsResponse, e
 	return m, nil
 }
 
-func (c *examServiceClient) EnrollStudents(ctx context.Context, in *EnrollStudentsRequest, opts ...grpc.CallOption) (*EnrollStudentsResponse, error) {
-	out := new(EnrollStudentsResponse)
-	err := c.cc.Invoke(ctx, "/exam.ExamService/EnrollStudents", in, out, opts...)
+func (c *examServiceClient) EnrollStudents(ctx context.Context, opts ...grpc.CallOption) (ExamService_EnrollStudentsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &ExamService_ServiceDesc.Streams[1], "/exam.ExamService/EnrollStudents", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &examServiceEnrollStudentsClient{stream}
+	return x, nil
+}
+
+type ExamService_EnrollStudentsClient interface {
+	Send(*EnrollStudentsRequest) error
+	CloseAndRecv() (*EnrollStudentsResponse, error)
+	grpc.ClientStream
+}
+
+type examServiceEnrollStudentsClient struct {
+	grpc.ClientStream
+}
+
+func (x *examServiceEnrollStudentsClient) Send(m *EnrollStudentsRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *examServiceEnrollStudentsClient) CloseAndRecv() (*EnrollStudentsResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(EnrollStudentsResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func (c *examServiceClient) GetStudentsPerExam(ctx context.Context, in *GetStudentsPerExamRequest, opts ...grpc.CallOption) (ExamService_GetStudentsPerExamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &ExamService_ServiceDesc.Streams[1], "/exam.ExamService/GetStudentsPerExam", opts...)
+	stream, err := c.cc.NewStream(ctx, &ExamService_ServiceDesc.Streams[2], "/exam.ExamService/GetStudentsPerExam", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +163,7 @@ type ExamServiceServer interface {
 	GetExam(context.Context, *GetExamRequest) (*Exam, error)
 	SetExam(context.Context, *Exam) (*SetExamResponse, error)
 	SetQuestions(ExamService_SetQuestionsServer) error
-	EnrollStudents(context.Context, *EnrollStudentsRequest) (*EnrollStudentsResponse, error)
+	EnrollStudents(ExamService_EnrollStudentsServer) error
 	GetStudentsPerExam(*GetStudentsPerExamRequest, ExamService_GetStudentsPerExamServer) error
 	mustEmbedUnimplementedExamServiceServer()
 }
@@ -156,8 +181,8 @@ func (UnimplementedExamServiceServer) SetExam(context.Context, *Exam) (*SetExamR
 func (UnimplementedExamServiceServer) SetQuestions(ExamService_SetQuestionsServer) error {
 	return status.Errorf(codes.Unimplemented, "method SetQuestions not implemented")
 }
-func (UnimplementedExamServiceServer) EnrollStudents(context.Context, *EnrollStudentsRequest) (*EnrollStudentsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EnrollStudents not implemented")
+func (UnimplementedExamServiceServer) EnrollStudents(ExamService_EnrollStudentsServer) error {
+	return status.Errorf(codes.Unimplemented, "method EnrollStudents not implemented")
 }
 func (UnimplementedExamServiceServer) GetStudentsPerExam(*GetStudentsPerExamRequest, ExamService_GetStudentsPerExamServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetStudentsPerExam not implemented")
@@ -237,22 +262,30 @@ func (x *examServiceSetQuestionsServer) Recv() (*Question, error) {
 	return m, nil
 }
 
-func _ExamService_EnrollStudents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EnrollStudentsRequest)
-	if err := dec(in); err != nil {
+func _ExamService_EnrollStudents_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(ExamServiceServer).EnrollStudents(&examServiceEnrollStudentsServer{stream})
+}
+
+type ExamService_EnrollStudentsServer interface {
+	SendAndClose(*EnrollStudentsResponse) error
+	Recv() (*EnrollStudentsRequest, error)
+	grpc.ServerStream
+}
+
+type examServiceEnrollStudentsServer struct {
+	grpc.ServerStream
+}
+
+func (x *examServiceEnrollStudentsServer) SendAndClose(m *EnrollStudentsResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *examServiceEnrollStudentsServer) Recv() (*EnrollStudentsRequest, error) {
+	m := new(EnrollStudentsRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	if interceptor == nil {
-		return srv.(ExamServiceServer).EnrollStudents(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/exam.ExamService/EnrollStudents",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ExamServiceServer).EnrollStudents(ctx, req.(*EnrollStudentsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return m, nil
 }
 
 func _ExamService_GetStudentsPerExam_Handler(srv interface{}, stream grpc.ServerStream) error {
@@ -291,15 +324,16 @@ var ExamService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "SetExam",
 			Handler:    _ExamService_SetExam_Handler,
 		},
-		{
-			MethodName: "EnrollStudents",
-			Handler:    _ExamService_EnrollStudents_Handler,
-		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "SetQuestions",
 			Handler:       _ExamService_SetQuestions_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "EnrollStudents",
+			Handler:       _ExamService_EnrollStudents_Handler,
 			ClientStreams: true,
 		},
 		{
