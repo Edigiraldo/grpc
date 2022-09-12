@@ -3,6 +3,7 @@ package servers
 import (
 	"context"
 	"io"
+	"log"
 
 	"github.com/Edigiraldo/grpc/exampb"
 	"github.com/Edigiraldo/grpc/models"
@@ -122,4 +123,46 @@ func (e *Exam) GetStudentsPerExam(req *exampb.GetStudentsPerExamRequest, stream 
 	}
 
 	return nil
+}
+
+func (e *Exam) TakeExam(stream exampb.ExamService_TakeExamServer) error {
+	answer, err := stream.Recv()
+	if err == io.EOF {
+		return nil
+	}
+
+	questions, err := e.repository.GetQuestionsPerExam(context.Background(), answer.GetExamId())
+	if err != nil {
+		return err
+	}
+
+	i := 0
+	var currentQuestion = models.Question{}
+	for {
+		if i < len(questions) {
+			currentQuestion = questions[i]
+		}
+
+		if i <= len(questions)-1 {
+			questionToSend := &exampb.Question{
+				Id:       currentQuestion.Id,
+				Question: currentQuestion.Question,
+			}
+			err := stream.Send(questionToSend)
+			if err != nil {
+				log.Printf("Error sending question: %v", err)
+				return err
+			}
+			i++
+		}
+		answer, err := stream.Recv()
+		if err == io.EOF {
+			return nil
+		}
+		if err != nil {
+			log.Printf("Error receiving answer: %v", err)
+			return err
+		}
+		log.Println("Answer for question:", currentQuestion.Question, "is", answer.GetAnswer())
+	}
 }
