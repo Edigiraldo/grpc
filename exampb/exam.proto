@@ -44,12 +44,18 @@ message GetStudentsPerExamRequest{
 	string exam_id = 1;
 }
 
+message TakeTestRequest {
+	string exam_id = 1;
+	string answer = 2;
+}
+
 service ExamService {
 	rpc GetExam(GetExamRequest) returns (Exam);
 	rpc SetExam(Exam) returns (SetExamResponse);
 	rpc SetQuestions(stream Question) returns (SetQuestionsResponse);
 	rpc EnrollStudents(stream EnrollStudentsRequest) returns (EnrollStudentsResponse);
 	rpc GetStudentsPerExam(GetStudentsPerExamRequest) returns (stream student.Student);
+	rpc TakeExam(stream TakeTestRequest) returns (stream Question);
 }
 
 
