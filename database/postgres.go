@@ -91,9 +91,36 @@ func (repo *PostgresRepository) GetStudentsPerExam(ctx context.Context, examId s
 
 	err = rows.Close()
 	if err != nil {
-		log.Println("error closing rows: %w", err)
+		log.Printf("error closing rows: %v", err)
 		return nil, err
 	}
 
 	return students, nil
+}
+
+func (repo *PostgresRepository) GetQuestionsPerExam(ctx context.Context, examId string) ([]models.Question, error) {
+	rows, err := repo.db.QueryContext(ctx, "SELECT id, question, exam_id FROM questions WHERE exam_id = $1", examId)
+	if err != nil {
+		return nil, err
+	}
+
+	var questions []models.Question
+	for rows.Next() {
+		question := models.Question{}
+		if err := rows.Scan(&question.Id, &question.Question, &question.ExamId); err == nil {
+			questions = append(questions, question)
+		}
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	err = rows.Close()
+	if err != nil {
+		log.Printf("error closing rows: %v", err)
+		return nil, err
+	}
+
+	return questions, nil
 }
