@@ -44,7 +44,7 @@ message GetStudentsPerExamRequest{
 	string exam_id = 1;
 }
 
-message TakeTestRequest {
+message TakeExamRequest {
 	string exam_id = 1;
 	string answer = 2;
 }
@@ -55,7 +55,7 @@ service ExamService {
 	rpc SetQuestions(stream Question) returns (SetQuestionsResponse);
 	rpc EnrollStudents(stream EnrollStudentsRequest) returns (EnrollStudentsResponse);
 	rpc GetStudentsPerExam(GetStudentsPerExamRequest) returns (stream student.Student);
-	rpc TakeExam(stream TakeTestRequest) returns (stream Question);
+	rpc TakeExam(stream TakeExamRequest) returns (stream Question);
 }
 
 

@@ -167,7 +167,7 @@ func (c *examServiceClient) TakeExam(ctx context.Context, opts ...grpc.CallOptio
 }
 
 type ExamService_TakeExamClient interface {
-	Send(*TakeTestRequest) error
+	Send(*TakeExamRequest) error
 	Recv() (*Question, error)
 	grpc.ClientStream
 }
@@ -176,7 +176,7 @@ type examServiceTakeExamClient struct {
 	grpc.ClientStream
 }
 
-func (x *examServiceTakeExamClient) Send(m *TakeTestRequest) error {
+func (x *examServiceTakeExamClient) Send(m *TakeExamRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
@@ -351,7 +351,7 @@ func _ExamService_TakeExam_Handler(srv interface{}, stream grpc.ServerStream) er
 
 type ExamService_TakeExamServer interface {
 	Send(*Question) error
-	Recv() (*TakeTestRequest, error)
+	Recv() (*TakeExamRequest, error)
 	grpc.ServerStream
 }
 
@@ -363,8 +363,8 @@ func (x *examServiceTakeExamServer) Send(m *Question) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *examServiceTakeExamServer) Recv() (*TakeTestRequest, error) {
-	m := new(TakeTestRequest)
+func (x *examServiceTakeExamServer) Recv() (*TakeExamRequest, error) {
+	m := new(TakeExamRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}

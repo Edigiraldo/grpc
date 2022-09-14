@@ -445,7 +445,7 @@ func (x *GetStudentsPerExamRequest) GetExamId() string {
 	return ""
 }
 
-type TakeTestRequest struct {
+type TakeExamRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -454,8 +454,8 @@ type TakeTestRequest struct {
 	Answer string `protobuf:"bytes,2,opt,name=answer,proto3" json:"answer,omitempty"`
 }
 
-func (x *TakeTestRequest) Reset() {
-	*x = TakeTestRequest{}
+func (x *TakeExamRequest) Reset() {
+	*x = TakeExamRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_exampb_exam_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -463,13 +463,13 @@ func (x *TakeTestRequest) Reset() {
 	}
 }
 
-func (x *TakeTestRequest) String() string {
+func (x *TakeExamRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*TakeTestRequest) ProtoMessage() {}
+func (*TakeExamRequest) ProtoMessage() {}
 
-func (x *TakeTestRequest) ProtoReflect() protoreflect.Message {
+func (x *TakeExamRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_exampb_exam_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -481,19 +481,19 @@ func (x *TakeTestRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TakeTestRequest.ProtoReflect.Descriptor instead.
-func (*TakeTestRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use TakeExamRequest.ProtoReflect.Descriptor instead.
+func (*TakeExamRequest) Descriptor() ([]byte, []int) {
 	return file_exampb_exam_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *TakeTestRequest) GetExamId() string {
+func (x *TakeExamRequest) GetExamId() string {
 	if x != nil {
 		return x.ExamId
 	}
 	return ""
 }
 
-func (x *TakeTestRequest) GetAnswer() string {
+func (x *TakeExamRequest) GetAnswer() string {
 	if x != nil {
 		return x.Answer
 	}
@@ -535,7 +535,7 @@ var file_exampb_exam_proto_rawDesc = []byte{
 	0x74, 0x73, 0x50, 0x65, 0x72, 0x45, 0x78, 0x61, 0x6d, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
 	0x12, 0x17, 0x0a, 0x07, 0x65, 0x78, 0x61, 0x6d, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
 	0x09, 0x52, 0x06, 0x65, 0x78, 0x61, 0x6d, 0x49, 0x64, 0x22, 0x42, 0x0a, 0x0f, 0x54, 0x61, 0x6b,
-	0x65, 0x54, 0x65, 0x73, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x17, 0x0a, 0x07,
+	0x65, 0x45, 0x78, 0x61, 0x6d, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x17, 0x0a, 0x07,
 	0x65, 0x78, 0x61, 0x6d, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x65,
 	0x78, 0x61, 0x6d, 0x49, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x61, 0x6e, 0x73, 0x77, 0x65, 0x72, 0x18,
 	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x61, 0x6e, 0x73, 0x77, 0x65, 0x72, 0x32, 0xf7, 0x02,
@@ -560,7 +560,7 @@ var file_exampb_exam_proto_rawDesc = []byte{
 	0x72, 0x45, 0x78, 0x61, 0x6d, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x10, 0x2e, 0x73,
 	0x74, 0x75, 0x64, 0x65, 0x6e, 0x74, 0x2e, 0x53, 0x74, 0x75, 0x64, 0x65, 0x6e, 0x74, 0x30, 0x01,
 	0x12, 0x35, 0x0a, 0x08, 0x54, 0x61, 0x6b, 0x65, 0x45, 0x78, 0x61, 0x6d, 0x12, 0x15, 0x2e, 0x65,
-	0x78, 0x61, 0x6d, 0x2e, 0x54, 0x61, 0x6b, 0x65, 0x54, 0x65, 0x73, 0x74, 0x52, 0x65, 0x71, 0x75,
+	0x78, 0x61, 0x6d, 0x2e, 0x54, 0x61, 0x6b, 0x65, 0x45, 0x78, 0x61, 0x6d, 0x52, 0x65, 0x71, 0x75,
 	0x65, 0x73, 0x74, 0x1a, 0x0e, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x2e, 0x51, 0x75, 0x65, 0x73, 0x74,
 	0x69, 0x6f, 0x6e, 0x28, 0x01, 0x30, 0x01, 0x42, 0x23, 0x5a, 0x21, 0x67, 0x69, 0x74, 0x68, 0x75,
 	0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x45, 0x64, 0x69, 0x67, 0x69, 0x72, 0x61, 0x6c, 0x64, 0x6f,
@@ -590,7 +590,7 @@ var file_exampb_exam_proto_goTypes = []interface{}{
 	(*EnrollStudentsRequest)(nil),     // 5: exam.EnrollStudentsRequest
 	(*EnrollStudentsResponse)(nil),    // 6: exam.EnrollStudentsResponse
 	(*GetStudentsPerExamRequest)(nil), // 7: exam.GetStudentsPerExamRequest
-	(*TakeTestRequest)(nil),           // 8: exam.TakeTestRequest
+	(*TakeExamRequest)(nil),           // 8: exam.TakeExamRequest
 	(*studentpb.Student)(nil),         // 9: student.Student
 }
 var file_exampb_exam_proto_depIdxs = []int32{
@@ -599,7 +599,7 @@ var file_exampb_exam_proto_depIdxs = []int32{
 	1, // 2: exam.ExamService.SetQuestions:input_type -> exam.Question
 	5, // 3: exam.ExamService.EnrollStudents:input_type -> exam.EnrollStudentsRequest
 	7, // 4: exam.ExamService.GetStudentsPerExam:input_type -> exam.GetStudentsPerExamRequest
-	8, // 5: exam.ExamService.TakeExam:input_type -> exam.TakeTestRequest
+	8, // 5: exam.ExamService.TakeExam:input_type -> exam.TakeExamRequest
 	0, // 6: exam.ExamService.GetExam:output_type -> exam.Exam
 	3, // 7: exam.ExamService.SetExam:output_type -> exam.SetExamResponse
 	4, // 8: exam.ExamService.SetQuestions:output_type -> exam.SetQuestionsResponse
@@ -716,7 +716,7 @@ func file_exampb_exam_proto_init() {
 			}
 		}
 		file_exampb_exam_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*TakeTestRequest); i {
+			switch v := v.(*TakeExamRequest); i {
 			case 0:
 				return &v.state
 			case 1:
