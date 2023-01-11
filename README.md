@@ -2,9 +2,13 @@
 
 To start your postgress db into a Docker container go to database directory and run:
 
-- docker build . -t grpc-db
+```console
+  docker build . -t grpc-db
+```
 
-- docker run -p 54321:5432 grpc-db
+```console
+  docker run -p 54321:5432 grpc-db
+```
 
 Then, go to the grpc dir and start the student and exam servers:
 
