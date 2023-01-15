@@ -12,7 +12,7 @@ The information is backed up into a PostgresDB.
 
 ## Instructions
 
-To start your postgres DB into a Docker container run:
+To start your postgres DB into a Docker container, run:
 
 ```console
   docker build ./database -t grpc-db
@@ -32,8 +32,8 @@ Then, to start the student and exam services:
   go run cmd/exam/main.go
 ```
 
-Now student and exam services can be consumed through some tool
-like postman creating gRPC request, selecting a method and if
+Now, student and exam services can be consumed through some tool
+like postman creating a gRPC request, selecting a method, and if
 it is the case, generating a message template:
 
 - To create a new student register:

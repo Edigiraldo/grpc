@@ -29,26 +29,26 @@ func main() {
 		{
 			Id:       "q1e1",
 			ExamId:   "e1",
-			Question: "What year was google founded?",
-			Answer:   "2005",
+			Question: "'OS' computer abbreviation usually means?",
+			Answer:   "Operating System",
 		},
 		{
 			Id:       "q2e1",
 			ExamId:   "e1",
-			Question: "What year was golang released publicly?",
-			Answer:   "2012",
+			Question: "How many Gigabytes are in 1 Terabyte??",
+			Answer:   "1024",
 		},
 		{
 			Id:       "q3e1",
 			ExamId:   "e1",
-			Question: "What year was the iphone announced?",
-			Answer:   "2007",
+			Question: "What is the name of the address of each computer on the Internet?",
+			Answer:   "IP Address",
 		},
 		{
 			Id:       "q4e1",
 			ExamId:   "e1",
-			Question: "What year was World Wide Web invented at CERN?",
-			Answer:   "1989",
+			Question: "What command can you use to count the number of lines, words, and characters in a file?",
+			Answer:   "wc",
 		},
 	}
 	SetQuestions(examServiceClient, questions)

@@ -19,15 +19,15 @@ func main() {
 	studentServiceClient := studentpb.NewStudentServiceClient(clientConn)
 
 	students := []*studentpb.Student{
-		{Id: "s1", Name: "student1", Age: 1},
-		{Id: "s2", Name: "student2", Age: 2},
-		{Id: "s3", Name: "student3", Age: 3},
-		{Id: "s4", Name: "student4", Age: 4},
-		{Id: "s5", Name: "student5", Age: 5},
-		{Id: "s6", Name: "student6", Age: 6},
-		{Id: "s7", Name: "student7", Age: 7},
-		{Id: "s8", Name: "student8", Age: 8},
-		{Id: "s9", Name: "student9", Age: 9},
+		{Id: "s1", Name: "Dennis Ritchie", Age: 70},
+		{Id: "s6", Name: "Brian Kernighan", Age: 81},
+		{Id: "s2", Name: "Bjarne Stroustrup", Age: 72},
+		{Id: "s3", Name: "Linus Torvalds", Age: 53},
+		{Id: "s4", Name: "Anders Hejlsberg", Age: 62},
+		{Id: "s9", Name: "Donald Knuth", Age: 85},
+		{Id: "s8", Name: "Guido van Rossum", Age: 66},
+		{Id: "s5", Name: "Tim Berners-Lee", Age: 67},
+		{Id: "s7", Name: "Ken Thompson", Age: 79},
 	}
 
 	studentIds := make([]string, 0, len(students))
