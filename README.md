@@ -1,16 +1,28 @@
 # Exams with grpc
 
-To start your postgress db into a Docker container go to database directory and run:
+These project consists of a service that allows to manage students
+information, set exams, create exam questions, enroll students into
+these exams and allow them to take the tests.
+
+The project service uses gRPC protocol which uses HTTP/2 and
+protobufers. Because of that, questions creation, students enrollment can be
+steamed by the client, also, the exam can be taken with a bidirectional
+(server-client) streaming and students list by exam can be streamed to
+the client. The information is backed up into a PostgresDB.
+
+## Instructions
+
+To start your postgress db into a Docker container run:
 
 ```console
-  docker build . -t grpc-db
+  docker build ./database -t grpc-db
 ```
 
 ```console
   docker run -p 54321:5432 grpc-db
 ```
 
-Then, go to the grpc dir and start the student and exam servers:
+Then, to start the student and exam services:
 
 ```console
   go run cmd/student/main.go
@@ -20,15 +32,37 @@ Then, go to the grpc dir and start the student and exam servers:
   go run cmd/exam/main.go
 ```
 
-Now the student service will allow you to set and get students. Also, in the exam service, you will be able to set exams, the questions for them, enroll students to each exam, get the studens per exam and finally take an exam. To use these services:
+Now student and exam services can be consumed through some tool
+like postman creating gRPC request, selecting a method and if
+it is the case, generating a message template:
 
-- Go to Postman and create a new gRPC request.
+- To create a new student register:
 
-- Connect to localhost:5060(Students) or localhost:5070(Exams).
+![Set student](./imgs/set-student.png "create student")
 
-- Click on select a method, select the method you want, for example SetExam.
+- To get a student by id:
 
-- Click on the "Generate Example Message" fill the generated message and invoke the procedure.
+![Get student](./imgs/get-student.png "get student")
+
+- To create an exam:
+
+![Set exam](./imgs/set-exam.png "set exam")
+
+- To set exam quesions:
+
+![Set questions](./imgs/set-questions.png "set questions")
+
+- To enroll students in your exam:
+
+![Enroll students](./imgs/enroll-student.png "enroll student")
+
+- To get students per exam:
+
+![Get students per exam](./imgs/get-students-per-exam.png "get students by exam")
+
+- To take the exam:
+
+![Take exam](./imgs/take-exam.png "take exam")
 
 If you want to run an already prepared example:
 
