@@ -1,18 +1,18 @@
 # Exams with grpc
 
-These project consists of a service that allows to manage students
-information, set exams, create exam questions, enroll students into
-these exams and allow them to take the tests.
+These project consists of a service that allows you to manage students
+information, set exams, create exam questions, enroll students in these
+exams and allow them to take the tests.
 
-The project service uses gRPC protocol which uses HTTP/2 and
-protobufers. Because of that, questions creation, students enrollment can be
-steamed by the client, also, the exam can be taken with a bidirectional
-(server-client) streaming and students list by exam can be streamed to
-the client. The information is backed up into a PostgresDB.
+The project service uses gRPC protocol which uses HTTP/2 and protobufers.
+So, questions creation, students enrollment can be done through client-side
+streaming, also, the exam can be taken with a bidirectional (server-client)
+streaming and the list of students per exam can be streamed to the client.
+The information is backed up into a PostgresDB.
 
 ## Instructions
 
-To start your postgress db into a Docker container run:
+To start your postgres DB into a Docker container run:
 
 ```console
   docker build ./database -t grpc-db
@@ -48,7 +48,7 @@ it is the case, generating a message template:
 
 ![Set exam](./imgs/set-exam.png "set exam")
 
-- To set exam quesions:
+- To set exam questions:
 
 ![Set questions](./imgs/set-questions.png "set questions")
 
